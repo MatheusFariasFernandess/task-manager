@@ -1,0 +1,4 @@
+FROM openjdk:11
+MAINTAINER Matheus
+COPY build/libs/*.jar app.jar
+ENTRYPOINT ["java","-jar","app.jar"]
