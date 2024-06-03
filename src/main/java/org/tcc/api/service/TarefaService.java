@@ -46,7 +46,7 @@ public class TarefaService {
             ascTarefaUsuarioRepository.save(new AscTarefaUsuario(this.criarTarefa(tarefa),usuario));
         }
     }
-    private void porcentagemTarefa(TarefaDTOOut tarefa){
+    private void porcentagemTarefaConcluida(TarefaDTOOut tarefa){
         Usuario usuario = new Usuario(1L);
 
         Long tarefasTotais = tarefaRepository.quantidadeTarefasDaSemana(usuario.getId(),tarefa.semanaAtual(),null)  ;
@@ -58,7 +58,7 @@ public class TarefaService {
         return tarefaRepository.findTarefasByUsuarioId(concluido,1L,titulo,descricao, prioridade,paginacao)
                 .map(tarefa-> {
                     TarefaDTOOut tf = new TarefaDTOOut(tarefa);
-                    this.porcentagemTarefa(tf);
+                    this.porcentagemTarefaConcluida(tf);
                     return tf;
                 });
     }
