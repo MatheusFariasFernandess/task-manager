@@ -12,7 +12,8 @@ public class AnexoService {
     private final static String PATH = "C:\\Users\\Matheus\\Documents\\taskmanager\\api\\src\\main\\resources\\imagens\\";
 
     protected AnexoDTO salvarArquivo(AnexoDTO anexoDTO){
-        if(anexoDTO.getNome()!=null  && anexoDTO.getArquivo()!=null ) {
+
+        if(anexoDTO!=null && anexoDTO.getNome()!=null  && anexoDTO.getArquivo()!=null ) {
             byte[] arquivo = Base64.getDecoder().decode(anexoDTO.getArquivo());
             anexoDTO.setNome(PATH + anexoDTO.getNome() + FileFormat.JPG.getDescricaoFormato());
 

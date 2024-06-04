@@ -30,8 +30,10 @@ dependencies {
 //    // https://mvnrepository.com/artifact/org.springframework.security/spring-security-jwt
 //    implementation group: 'org.springframework.security', name: 'spring-security-jwt', version: '1.0.5.RELEASE'
 
-//    implementation 'org.springframework.boot:spring-boot-starter-security'
-//    testImplementation 'org.springframework.security:spring-security-test'
+    implementation 'com.auth0:java-jwt:4.4.0'
+
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('bootBuildImage') {
