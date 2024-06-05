@@ -2,10 +2,10 @@ package org.tcc.api.config;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.tcc.api.model.Usuario;
+import org.tcc.api.exceptions.NotFound;
 import org.tcc.api.repository.UsuarioRepository;
 import org.tcc.api.service.TokenService;
 
@@ -15,37 +15,40 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Service
+@Component
 public class SecurityFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
     private final UsuarioRepository usuarioRepository;
+
     public SecurityFilter(TokenService tokenService, UsuarioRepository usuarioRepository) {
         this.tokenService = tokenService;
         this.usuarioRepository = usuarioRepository;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String token = this.recoverToken(request);
+        String token = getToken(request);
         if(token!=null){
-            String subject = tokenService.verigyToken(token);
-            Usuario userDetails = usuarioRepository.findUsuarioByUserName(subject)
-                    .orElseThrow();
+            String userName = tokenService.verifyToken(token);
+            UserDetails userDetails = usuarioRepository.findUsuarioByUserName(userName)
+                    .orElseThrow(()->new NotFound("Usuario não encontrado"));
 
-            var logado = new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(logado);
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails.getUsername(),null);
+            SecurityContextHolder.getContext().setAuthentication(auth);
         }
+
         filterChain.doFilter(request,response);
     }
 
 
-    public String recoverToken(HttpServletRequest request){
-        String authorization = request.getHeader("Authorization");
-        if(authorization!=null){
-            return authorization.replace("Bearer ","");
-        }
-        return null;
+    public String getToken(HttpServletRequest request){
+        String bearer = request.getHeader("Authorization");
+        if(bearer==null){return null;}
+
+        return bearer.replace("Bearer ","");
     }
+
+
+
 }

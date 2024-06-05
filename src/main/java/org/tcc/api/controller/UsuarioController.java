@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,26 +19,25 @@ import org.tcc.api.service.UsuarioService;
 @RequestMapping("/usuario")
 public class UsuarioController {
     private final UsuarioService usuarioService;
-    private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
-    public UsuarioController(UsuarioService usuarioService, AuthenticationManager authenticationManager, TokenService tokenService) {
+    private final AuthenticationManager authenticationManager;
+    public UsuarioController(UsuarioService usuarioService, TokenService tokenService, AuthenticationManager authenticationManager) {
         this.usuarioService = usuarioService;
-        this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
-    }
-
-    @PostMapping("/criar")
-    public ResponseEntity<UsuarioDTOOut>criarUsuario(@RequestBody UsuarioDTOIn dto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.criarUsuario(dto));
+        this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UsuarioDTOOut>login(@RequestBody UsuarioDTOIn dto){
-        var userNameAndPassword = new UsernamePasswordAuthenticationToken(dto.getLogin(),dto.getSenha());
-        var authenticatio = authenticationManager.authenticate(userNameAndPassword);
+    public ResponseEntity<UsuarioDTOOut> login(@RequestBody UsuarioDTOIn dto){
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(dto.getLogin(),dto.getSenha());
+        Authentication authenticate = authenticationManager.authenticate(authenticationToken);
 
-        var token = tokenService.generateToken((Usuario) authenticatio.getPrincipal());
-        UsuarioDTOOut usuarioDTOOut = new UsuarioDTOOut(token);
+        Usuario usuario = (Usuario) authenticate.getPrincipal();
+        UsuarioDTOOut usuarioDTOOut = new UsuarioDTOOut(usuario);
+        String token = tokenService.createToken(usuario);
+        usuarioDTOOut.setToken(token);
         return ResponseEntity.status(HttpStatus.OK).body(usuarioDTOOut);
     }
+
+
 }

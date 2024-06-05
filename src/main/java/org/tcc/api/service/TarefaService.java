@@ -3,6 +3,7 @@ package org.tcc.api.service;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.tcc.api.DTO.input.TarefaDTOIn;
 import org.tcc.api.DTO.output.TarefaDTOOut;
@@ -41,7 +42,7 @@ public class TarefaService {
     }
     @Transactional
     public void criarTarefaUsuario(List<TarefaDTOIn>dto) throws IOException {
-        Usuario usuario = new Usuario(1L);
+        Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         for(TarefaDTOIn tarefa : dto){
             ascTarefaUsuarioRepository.save(new AscTarefaUsuario(this.criarTarefa(tarefa),usuario));
         }
