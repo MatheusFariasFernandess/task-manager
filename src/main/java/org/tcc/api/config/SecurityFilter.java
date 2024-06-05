@@ -34,7 +34,10 @@ public class SecurityFilter extends OncePerRequestFilter {
             UserDetails userDetails = usuarioRepository.findUsuarioByUserName(userName)
                     .orElseThrow(()->new NotFound("Usuario não encontrado"));
 
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails.getUsername(),null);
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                    userDetails.getUsername(),
+                    null,
+                    userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
 
