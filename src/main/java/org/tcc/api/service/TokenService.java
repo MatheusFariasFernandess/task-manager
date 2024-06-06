@@ -19,7 +19,7 @@ public class TokenService {
         return JWT.create()
                 .withSubject(userDetails.getUsername())
                 .withIssuer("tcc-api")
-                .withExpiresAt(LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00")))
+                .withExpiresAt(LocalDateTime.now().plusHours(9999999).toInstant(ZoneOffset.of("-03:00")))
                 .sign(algorithm);
     }
     public String verifyToken(String token){

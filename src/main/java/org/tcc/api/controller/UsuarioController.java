@@ -39,5 +39,10 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuarioDTOOut);
     }
 
+    @PostMapping("/cadastrar")
+    public ResponseEntity criarUsuario(@RequestBody UsuarioDTOIn dto){
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioService.criarUsuario(dto));
+    }
+
 
 }

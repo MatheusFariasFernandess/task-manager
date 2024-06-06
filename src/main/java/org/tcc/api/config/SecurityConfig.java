@@ -22,13 +22,35 @@ public class SecurityConfig {
         this.securityFilter = securityFilter;
     }
 
+    private static final String[] AUTH_WHITELIST = {
+            // -- Swagger UI v2
+            "/v2/api-docs",
+            "/swagger-ui/* ",
+            "/swagger-resources",
+            "/swagger-resources/* ",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/* ",
+            // -- Swagger UI v3 (OpenAPI)
+            "/v3/api-docs/* ",
+            "/swagger-ui/* "
+            // other public endpoints of your API may be appended to this array
+    };
+
+
+
+    public static String[] SWAGGER_URL_PATHS = new String[] { "/swagger-ui/index.html", "/swagger-resources/* ",
+            "/swagger-ui.html",
+            "/v2/api-docs/* ", "/webjars/ ", "/swaggerfox.js", "/swagger-ui/* "};
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(csfr->csfr.disable())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(aush->aush.regexMatchers(AUTH_WHITELIST).permitAll())
                 .authorizeHttpRequests(auth->auth.regexMatchers(HttpMethod.POST,"/usuario/login").permitAll())
-                .authorizeHttpRequests(auth->auth.regexMatchers(HttpMethod.POST,"/usuario/criar").permitAll())
+                .authorizeHttpRequests(auth->auth.regexMatchers(HttpMethod.POST,"/usuario/cadastrar").permitAll())
                 .authorizeHttpRequests(aush->aush.anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

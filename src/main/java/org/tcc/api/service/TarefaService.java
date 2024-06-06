@@ -3,8 +3,11 @@ package org.tcc.api.service;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.ObjectError;
 import org.tcc.api.DTO.input.TarefaDTOIn;
 import org.tcc.api.DTO.output.TarefaDTOOut;
 import org.tcc.api.exceptions.NotFound;
@@ -25,11 +28,13 @@ public class TarefaService {
     private final TarefaRepository tarefaRepository;
     private final AscTarefaUsuarioRepository ascTarefaUsuarioRepository;
     private final UsuarioRepository usuarioRepository;
+    private final UsuarioService usuarioService;
 
-    public TarefaService(TarefaRepository tarefaRepository, AscTarefaUsuarioRepository ascTarefaUsuarioRepository, UsuarioRepository usuarioRepository) {
+    public TarefaService(TarefaRepository tarefaRepository, AscTarefaUsuarioRepository ascTarefaUsuarioRepository, UsuarioRepository usuarioRepository, UsuarioService usuarioService) {
         this.tarefaRepository = tarefaRepository;
         this.ascTarefaUsuarioRepository = ascTarefaUsuarioRepository;
         this.usuarioRepository = usuarioRepository;
+        this.usuarioService = usuarioService;
     }
 
     private Tarefa findTarefaById(Long id)  {
@@ -42,9 +47,8 @@ public class TarefaService {
     }
     @Transactional
     public void criarTarefaUsuario(List<TarefaDTOIn>dto) throws IOException {
-        Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         for(TarefaDTOIn tarefa : dto){
-            ascTarefaUsuarioRepository.save(new AscTarefaUsuario(this.criarTarefa(tarefa),usuario));
+            ascTarefaUsuarioRepository.save(new AscTarefaUsuario(this.criarTarefa(tarefa),usuarioService.usuarioLogado()));
         }
     }
     private void porcentagemTarefaConcluida(TarefaDTOOut tarefa){
@@ -56,7 +60,7 @@ public class TarefaService {
         tarefa.setPorcentagemConcluida((float) tarefasConcluidas / tarefasTotais * 100);
     }
     public Page<TarefaDTOOut> listarTarefas(Boolean concluido, String titulo, String descricao, Long prioridade, Pageable paginacao){
-        return tarefaRepository.findTarefasByUsuarioId(concluido,1L,titulo,descricao, prioridade,paginacao)
+        return tarefaRepository.findTarefasByUsuarioId(concluido,usuarioService.usuarioLogado().getId(),titulo,descricao, prioridade,paginacao)
                 .map(tarefa-> {
                     TarefaDTOOut tf = new TarefaDTOOut(tarefa);
                     this.porcentagemTarefaConcluida(tf);
