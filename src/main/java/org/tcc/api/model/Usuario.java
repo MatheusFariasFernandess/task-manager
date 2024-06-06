@@ -22,7 +22,8 @@ public class Usuario implements UserDetails {
 
     @Column(name = "SENHA")
     private String senha;
-
+    @Column(name = "NOME")
+    private String nome;
     @Column(name = "FOTO")
     private String foto;
 
@@ -38,6 +39,15 @@ public class Usuario implements UserDetails {
         this.login = usuario.getLogin();
         this.senha = new BCryptPasswordEncoder().encode(usuario.getSenha());
         this.foto = usuario.getAnexo() == null ? null : usuario.getAnexo().getNome();
+        this.nome = usuario.getNome();
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getFoto() {

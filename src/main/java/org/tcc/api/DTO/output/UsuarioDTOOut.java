@@ -12,6 +12,7 @@ public class UsuarioDTOOut {
     private String foto;
 
     private String token;
+    private String nome;
     public UsuarioDTOOut() {
     }
 
@@ -24,6 +25,15 @@ public class UsuarioDTOOut {
         this.login = usuario.getLogin();
         this.senha = usuario.getSenha();
         this.foto = usuario.getFoto() == null ? null : usuario.getFoto();
+        this.nome = usuario.getNome();
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getToken() {
