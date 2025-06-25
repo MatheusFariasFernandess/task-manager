@@ -3,10 +3,12 @@ on: [push]
 
 jobs:
   build:
+    runs-on: ubuntu-latest
     services:
       postgres:
         image: postgres:15
         env:
+          POSTGRES_DB: taskmanagerdb
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: 1234
         options: >-
@@ -16,7 +18,6 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 17
