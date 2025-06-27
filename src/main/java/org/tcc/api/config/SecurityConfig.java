@@ -48,7 +48,14 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(csfr->csfr.disable())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(aush->aush.regexMatchers(AUTH_WHITELIST).permitAll())
+                .authorizeHttpRequests().antMatchers(
+                        "/v2/api-docs",
+                        "/configuration/ui",
+                        "/swagger-resources/**",
+                        "/configuration/**",
+                        "/swagger-ui.html",
+                        "/webjars/**"
+                ).permitAll().and()
                 .authorizeHttpRequests(auth->auth.regexMatchers(HttpMethod.POST,"/usuario/login").permitAll())
                 .authorizeHttpRequests(auth->auth.regexMatchers(HttpMethod.POST,"/usuario/cadastrar").permitAll())
                 .authorizeHttpRequests(aush->aush.anyRequest().authenticated())
@@ -65,4 +72,6 @@ public class SecurityConfig {
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
+
 }
