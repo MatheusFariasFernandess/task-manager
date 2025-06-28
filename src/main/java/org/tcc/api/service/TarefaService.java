@@ -54,16 +54,16 @@ public class TarefaService {
     private void porcentagemTarefaConcluida(TarefaDTOOut tarefa){
         Usuario usuario = new Usuario(1L);
 
-        Long tarefasTotais = tarefaRepository.quantidadeTarefasDaSemana(usuario.getId(),tarefa.semanaAtual(),null)  ;
-        Long tarefasConcluidas = tarefaRepository.quantidadeTarefasDaSemana(usuario.getId(),tarefa.semanaAtual(),Boolean.TRUE);
-
-        tarefa.setPorcentagemConcluida((float) tarefasConcluidas / tarefasTotais * 100);
+//        Long tarefasTotais = tarefaRepository.quantidadeTarefasDaSemana(usuarioService.usuarioLogado().getId(),tarefa.semanaAtual(),null)  ;
+//        Long tarefasConcluidas = tarefaRepository.quantidadeTarefasDaSemana(usuarioService.usuarioLogado().getId(),tarefa.semanaAtual(),Boolean.TRUE);
+//
+//        tarefa.setPorcentagemConcluida((float) (tarefasConcluidas / tarefasTotais * 100));
     }
     public Page<TarefaDTOOut> listarTarefas(Boolean concluido, String titulo, String descricao, Long prioridade, Pageable paginacao){
         return tarefaRepository.findTarefasByUsuarioId(concluido,usuarioService.usuarioLogado().getId(),titulo,descricao, prioridade,paginacao)
                 .map(tarefa-> {
                     TarefaDTOOut tf = new TarefaDTOOut(tarefa);
-                    this.porcentagemTarefaConcluida(tf);
+//                    this.porcentagemTarefaConcluida(tf);
                     return tf;
                 });
     }

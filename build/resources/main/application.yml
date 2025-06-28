@@ -4,9 +4,9 @@ spring:
       matching-strategy: ant_path_matcher
   datasource:
     driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: 1234
-    url: jdbc:postgresql://localhost/taskmanagerdb
+    username: postgress
+    password: YzP0oCh2XQ3pqpGcBKnY68vqAw9JeHjM
+    url: jdbc:postgresql://dpg-d1ekqlili9vc73a6qjk0-a.oregon-postgres.render.com/taskmanagerdb_wkro
     platform: postgres
     initialization-mode: always
     continue-on-error: true

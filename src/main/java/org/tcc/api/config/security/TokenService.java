@@ -1,4 +1,4 @@
-package org.tcc.api.service;
+package org.tcc.api.config.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

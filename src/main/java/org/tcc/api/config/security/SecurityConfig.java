@@ -1,6 +1,5 @@
-package org.tcc.api.config;
+package org.tcc.api.config.security;
 
-import org.apache.catalina.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

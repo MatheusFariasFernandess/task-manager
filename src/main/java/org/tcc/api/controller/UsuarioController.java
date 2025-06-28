@@ -1,42 +1,28 @@
 package org.tcc.api.controller;
 
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.tcc.api.DTO.input.UsuarioDTOIn;
 import org.tcc.api.DTO.output.UsuarioDTOOut;
-import org.tcc.api.model.Usuario;
-import org.tcc.api.service.TokenService;
+import org.tcc.api.service.AuthService;
 import org.tcc.api.service.UsuarioService;
 
 @RestController
 @RequestMapping("/usuario")
 public class UsuarioController {
+    private final AuthService authService;
     private final UsuarioService usuarioService;
-    private final TokenService tokenService;
-    private final AuthenticationManager authenticationManager;
-    public UsuarioController(UsuarioService usuarioService, TokenService tokenService, AuthenticationManager authenticationManager) {
+    public UsuarioController(AuthService authService, UsuarioService usuarioService) {
+        this.authService = authService;
         this.usuarioService = usuarioService;
-        this.tokenService = tokenService;
-        this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UsuarioDTOOut> login(@RequestBody UsuarioDTOIn dto){
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(dto.getLogin(),dto.getSenha());
-        Authentication authenticate = authenticationManager.authenticate(authenticationToken);
+    public ResponseEntity<String> login(@RequestBody UsuarioDTOIn dto){
 
-        Usuario usuario = (Usuario) authenticate.getPrincipal();
-        UsuarioDTOOut usuarioDTOOut = new UsuarioDTOOut(usuario);
-        String token = tokenService.createToken(usuario);
-        usuarioDTOOut.setToken(token);
-        return ResponseEntity.status(HttpStatus.OK).body(usuarioDTOOut);
+        return ResponseEntity.status(HttpStatus.OK).body(authService.login(dto));
     }
 
     @PostMapping("/cadastrar")
@@ -44,5 +30,9 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuarioService.criarUsuario(dto));
     }
 
-
+    @GetMapping("/exists")
+    @ApiOperation(value = "Checa se já existe um usuario com esse login")
+    public ResponseEntity<Boolean>existsUsuario(@RequestParam String login){
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioService.checarSeExistsLogin(login));
+    }
 }

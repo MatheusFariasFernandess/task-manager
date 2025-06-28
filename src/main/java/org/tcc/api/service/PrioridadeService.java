@@ -7,6 +7,7 @@ import org.tcc.api.exceptions.NotFound;
 import org.tcc.api.model.Prioridade;
 import org.tcc.api.repository.PrioridadeRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,11 +18,11 @@ public class PrioridadeService {
     public PrioridadeService(PrioridadeRepository prioridadeRepository) {
         this.prioridadeRepository = prioridadeRepository;
     }
-
+    @Transactional
     public void criarPrioridade(PrioridadeDTOIn dto){
         prioridadeRepository.save(new Prioridade(dto));
     }
-
+    @Transactional
     public void editarPrioridade(Long id,PrioridadeDTOIn dto){
         Prioridade prioridade = prioridadeRepository.findById(id)
                 .orElseThrow(()-> new NotFound("Prioriadde não encontrada"));
