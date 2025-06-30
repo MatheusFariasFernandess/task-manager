@@ -2,6 +2,7 @@ package org.tcc.api.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -34,18 +35,17 @@ public class UsuarioService implements UserDetailsService  {
         this.tokenService = tokenService;
         this.rabbitTemplate = rabbitTemplate;
     }
-    @Transactional
-//    @RabbitListener(queues = "usuario.criar")
-    public UsuarioDTOOut criarUsuario(@Payload UsuarioDTOIn usuario){
-        checarSeExistsLogin(usuario.getLogin());
-        anexoService.salvarArquivo(usuario.getAnexo());
-        Usuario usuarioCriado = usuarioRepository.save(new Usuario(usuario));
-        return new UsuarioDTOOut(usuarioCriado);
-    }
+//    @Transactional
+//    @RabbitListener(queues = "criar-usuario.ex")
+//    public UsuarioDTOOut criarUsuario(UsuarioDTOIn usuario){
+//        checarSeExistsLogin(usuario.getLogin());
+//        anexoService.salvarArquivo(usuario.getAnexo());
+//        Usuario usuarioCriado = usuarioRepository.save(new Usuario(usuario));
+//        return new UsuarioDTOOut(usuarioCriado);
+//    }
 
     public void enviarUsuarioFila(UsuarioDTOIn usuario) throws JsonProcessingException {
-        this.rabbitTemplate.convertAndSend("usuario.criar",
-                new ObjectMapper().writeValueAsString(usuario));
+        this.rabbitTemplate.convertAndSend("criar-usuario.ex",usuario);
     }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

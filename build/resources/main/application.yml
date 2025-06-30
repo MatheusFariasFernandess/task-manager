@@ -22,3 +22,5 @@ spring:
     hibernate:
       ddl-auto: update
     database: postgresql
+server:
+  port: 8081

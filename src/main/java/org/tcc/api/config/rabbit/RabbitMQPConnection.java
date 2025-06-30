@@ -1,42 +1,89 @@
 package org.tcc.api.config.rabbit;
 
-import org.springframework.amqp.core.AmqpAdmin;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.Queue;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-
-@Component
+@Configuration
 public class RabbitMQPConnection {
-    private final AmqpAdmin amqpAdmin;
 
-    public RabbitMQPConnection(AmqpAdmin amqpAdmin) {
-        this.amqpAdmin = amqpAdmin;
+    @Bean
+    public Jackson2JsonMessageConverter converter() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.registerModule(new JavaTimeModule());
+        return new Jackson2JsonMessageConverter(objectMapper);
     }
 
-    protected Queue fila(String fila){
-        return new Queue(fila,Boolean.TRUE,Boolean.FALSE,Boolean.FALSE);
+    @Bean
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, Jackson2JsonMessageConverter messageConverter) {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        rabbitTemplate.setMessageConverter(messageConverter);
+        return rabbitTemplate;
     }
 
-    private DirectExchange definicaoExchange(){
-        return new DirectExchange("amq.direct");
+    @Bean
+    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
+            ConnectionFactory connectionFactory,
+            Jackson2JsonMessageConverter converter) {
+
+        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+        factory.setConnectionFactory(connectionFactory);
+        factory.setMessageConverter(converter);
+        factory.setDefaultRequeueRejected(false); // <<< ESSENCIAL!
+        return factory;
     }
 
-    private Binding relacionarmento(Queue fila,DirectExchange troca){
-        return new Binding(fila.getName(), Binding.DestinationType.QUEUE,troca.getName(),fila.getName(),null);
+    @Bean
+    public TopicExchange usuarioDlqExchange() {
+        return ExchangeBuilder.topicExchange("usuario.dlq")
+                .durable(true)
+                .build();
     }
-    @PostConstruct
-    public void adicionaFila(){
-        Queue fila = this.fila("usuario.criar");
 
-        DirectExchange directExchange = this.definicaoExchange();
+    @Bean
+    public Queue usuarioDlqQueue() {
+        return QueueBuilder
+                .durable("criar-usuario.dlq").build();
+    }
 
-        Binding relacionarmento = relacionarmento(fila, directExchange);
+    @Bean
+    public Binding bindingUsuarioDlq() {
+        return BindingBuilder
+                .bind(usuarioDlqQueue())
+                .to(usuarioDlqExchange())
+                .with("criar-usuario.dlq");
+    }
 
-        amqpAdmin.declareQueue(fila);
-        amqpAdmin.declareBinding(relacionarmento);
+    @Bean
+    public TopicExchange criarUsuarioExchange() {
+        return ExchangeBuilder
+                .topicExchange("usuario.ex")
+                .durable(true).build();
+    }
 
+    @Bean
+    public Queue criarUsuarioQueue() {
+        return QueueBuilder
+                .durable("criar-usuario.ex")
+                .deadLetterRoutingKey("criar-usuario.dlq")
+                .deadLetterExchange("usuario.dlq")
+                .build();
+    }
+
+    @Bean
+    public Binding bindingCriarUsuario() {
+        return BindingBuilder
+                .bind(criarUsuarioQueue())
+                .to(criarUsuarioExchange())
+                .with("criar-usuario.ex");
     }
 }

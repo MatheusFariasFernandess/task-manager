@@ -10,6 +10,9 @@ public class UsuarioDTOIn implements Serializable {
     private AnexoDTO anexo;
     private String nome;
 
+    public UsuarioDTOIn() {
+    }
+
     public String getNome() {
         return nome;
     }
