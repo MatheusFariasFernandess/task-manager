@@ -14,6 +14,7 @@ import org.tcc.api.exceptions.NotFound;
 import org.tcc.api.model.AscTarefaUsuario;
 import org.tcc.api.model.Tarefa;
 import org.tcc.api.model.Usuario;
+import org.tcc.api.projections.AscTarefaUsuarioProjections;
 import org.tcc.api.repository.AscTarefaUsuarioRepository;
 import org.tcc.api.repository.TarefaRepository;
 import org.tcc.api.repository.UsuarioRepository;
@@ -21,6 +22,7 @@ import org.tcc.api.repository.UsuarioRepository;
 import javax.transaction.Transactional;
 import java.io.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -59,13 +61,11 @@ public class TarefaService {
 //
 //        tarefa.setPorcentagemConcluida((float) (tarefasConcluidas / tarefasTotais * 100));
     }
-    public Page<TarefaDTOOut> listarTarefas(Boolean concluido, String titulo, String descricao, Long prioridade, Pageable paginacao){
-        return tarefaRepository.findTarefasByUsuarioId(concluido,usuarioService.usuarioLogado().getId(),titulo,descricao, prioridade,paginacao)
-                .map(tarefa-> {
-                    TarefaDTOOut tf = new TarefaDTOOut(tarefa);
-//                    this.porcentagemTarefaConcluida(tf);
-                    return tf;
-                });
+    public List<AscTarefaUsuarioProjections> listarTarefas(Boolean concluido, String titulo, String descricao, Long prioridade, Pageable paginacao){
+        List<AscTarefaUsuarioProjections>ascTarefaUsuarioProjections = new ArrayList<>();
+        ascTarefaUsuarioProjections.add(new TarefaDTOOut());
+
+        return ascTarefaUsuarioRepository.findByUsuario(usuarioService.usuarioLogado().getId());
     }
 
     @Transactional

@@ -1,4 +1,10 @@
 spring:
+  rabbitmq:
+#    host: rabbimq-compose.onrender.com
+    host: localhost
+    port: 5672
+    username: admin
+    password: 1234
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher

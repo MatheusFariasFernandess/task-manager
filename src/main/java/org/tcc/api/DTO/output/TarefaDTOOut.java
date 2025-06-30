@@ -3,12 +3,13 @@ package org.tcc.api.DTO.output;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.tcc.api.model.Tarefa;
+import org.tcc.api.projections.AscTarefaUsuarioProjections;
 import org.tcc.api.utils.Utils;
 
 import java.time.LocalDate;
 
 
-public class TarefaDTOOut {
+public class TarefaDTOOut implements AscTarefaUsuarioProjections {
     private Long id;
 
     private String titulo;
@@ -114,5 +115,15 @@ public class TarefaDTOOut {
 
     public void setDataExclusao(LocalDate dataExclusao) {
         this.dataExclusao = dataExclusao;
+    }
+
+    @Override
+    public String getNomeTarefa() {
+        return null;
+    }
+
+    @Override
+    public String getNomeUsuario() {
+        return null;
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.tcc.api.DTO.input.TarefaDTOIn;
 import org.tcc.api.DTO.output.TarefaDTOOut;
+import org.tcc.api.projections.AscTarefaUsuarioProjections;
 import org.tcc.api.service.TarefaService;
 
 import java.io.IOException;
@@ -22,11 +23,11 @@ public class TarefaController {
     }
 
     @GetMapping("/listar")
-    public ResponseEntity<Page<TarefaDTOOut>>listarTarefas(@RequestParam(required = false) Boolean concluido,
-                                                           @RequestParam(required = false) String titulo,
-                                                           @RequestParam(required = false) String descricao,
-                                                           @RequestParam(required = false) Long prioridade,
-                                                           Pageable paginacao){
+    public ResponseEntity<List<AscTarefaUsuarioProjections>>listarTarefas(@RequestParam(required = false) Boolean concluido,
+                                                                          @RequestParam(required = false) String titulo,
+                                                                          @RequestParam(required = false) String descricao,
+                                                                          @RequestParam(required = false) Long prioridade,
+                                                                          Pageable paginacao){
         return ResponseEntity.status(HttpStatus.OK).body(tarefaService.listarTarefas(concluido,titulo,descricao,prioridade,paginacao));
     }
 

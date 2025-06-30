@@ -1,6 +1,8 @@
 package org.tcc.api.DTO.input;
 
-public class UsuarioDTOIn {
+import java.io.Serializable;
+
+public class UsuarioDTOIn implements Serializable {
     private String login;
 
     private String senha;

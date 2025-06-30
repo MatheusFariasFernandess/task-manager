@@ -1,5 +1,6 @@
 package org.tcc.api.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,9 @@ public class UsuarioController {
     }
 
     @PostMapping("/cadastrar")
-    public ResponseEntity criarUsuario(@RequestBody UsuarioDTOIn dto){
-        return ResponseEntity.status(HttpStatus.OK).body(usuarioService.criarUsuario(dto));
+    public ResponseEntity criarUsuario(@RequestBody UsuarioDTOIn dto) throws JsonProcessingException {
+        usuarioService.enviarUsuarioFila(dto);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/exists")
