@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.tcc.api.DTO.input.LoginDTOIn;
 import org.tcc.api.DTO.input.UsuarioDTOIn;
 import org.tcc.api.DTO.output.UsuarioDTOOut;
 import org.tcc.api.service.AuthService;
@@ -20,7 +21,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UsuarioDTOIn dto){
+    public ResponseEntity<String> login(@RequestBody LoginDTOIn dto){
 
         return ResponseEntity.status(HttpStatus.OK).body(authService.login(dto));
     }

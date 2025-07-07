@@ -5,6 +5,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.tcc.api.DTO.input.LoginDTOIn;
 import org.tcc.api.DTO.input.UsuarioDTOIn;
 import org.tcc.api.DTO.output.UsuarioDTOOut;
 import org.tcc.api.config.security.TokenService;
@@ -23,7 +24,7 @@ public class AuthService {
         this.usuarioService = usuarioService;
     }
 
-    public String login(UsuarioDTOIn usuario){
+    public String login(LoginDTOIn usuario){
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(usuario.getLogin(),usuario.getSenha());
         Authentication authenticate = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
