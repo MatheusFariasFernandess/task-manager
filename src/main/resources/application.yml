@@ -1,12 +1,18 @@
 spring:
+#  rabbitmq:
+#    #    host: rabbimq-compose.onrender.com
+#    host: localhost
+#    port: 5672
+#    username: admin
+#    password: 1234
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
   datasource:
     driver-class-name: org.postgresql.Driver
-    username: postgress
-    password: YzP0oCh2XQ3pqpGcBKnY68vqAw9JeHjM
-    url: jdbc:postgresql://dpg-d1ekqlili9vc73a6qjk0-a.oregon-postgres.render.com/taskmanagerdb_wkro
+    username: taskmanagerdb_ufh1_user
+    password: FzyhwYD7P9FBlrEoe5qjKej5k4DEsZRL
+    url: jdbc:postgresql://dpg-d2icetmuk2gs73de73ug-a.oregon-postgres.render.com/taskmanagerdb_ufh1
     platform: postgres
     initialization-mode: always
     continue-on-error: true
